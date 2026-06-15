@@ -16,12 +16,22 @@ const works = await reponse.json()
 */
 
 function generateWorks(works) {
+
 for (let i = 0; i < works.length; i++) {
- const imageElement = document.querySelector("#portfolio .gallery img")
- const imageFigcaption = document.querySelector("#portfolio .gallery figcaption")
+
+ const classGallery = document.querySelector(".gallery")
+ const figureElement = document.createElement("figure")
+ const imageElement = document.createElement("img")
+ const imageFigcaption = document.createElement("figcaption")
+
  imageElement.src = works[i].imageUrl
  imageElement.alt = works[i].title
  imageFigcaption.textContent = works[i].title
+
+ classGallery.appendChild(figureElement);
+ figureElement.appendChild(imageElement);
+ figureElement.appendChild(imageFigcaption);
+
 }
 }
 generateWorks(works)

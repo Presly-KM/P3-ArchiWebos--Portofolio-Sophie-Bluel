@@ -222,3 +222,55 @@ footer nav ul {
 	margin: 2em
 }
 
+/* --- Style spécifique pour la page Login --- */
+
+#login {
+    width: 379px; /* Largeur standard pour correspondre au design Figma */
+    margin: 0 auto;
+    padding-top: 50px;
+    padding-bottom: 150px;
+}
+
+#login h2 {
+    margin-bottom: 30px;
+}
+
+#login form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+#login label {
+    margin: 15px 0 5px 0;
+    font-family: 'Work Sans', sans-serif;
+}
+
+#login input {
+    height: 50px;
+    font-size: 1.2em;
+    border: none;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+    padding-left: 10px;
+}
+
+#login input[type="submit"] {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: white;
+    background-color: #1D6154;
+    margin: 30px auto 20px auto;
+    width: 180px;
+    text-align: center;
+    border-radius: 60px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    color: #3D3D3D;
+    font-size: 0.9em;
+    text-decoration: underline;
+    font-family: 'Work Sans', sans-serif;
+}

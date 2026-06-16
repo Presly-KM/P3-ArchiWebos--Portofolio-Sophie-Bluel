@@ -42,3 +42,19 @@ generateWorks(works)
 
 initialiserGalerie()
 
+/*
+function ajouterFiltre() {
+
+  const btn-objets = document.querySelector(".btn-objets")
+  btn-objets.addEventListener("click", function () {
+  if (works[i].category.name === "Objets") {
+  const filtreObjets = works.filter(works => works.category.name === "Objets")
+  
+  // On efface la page et on la regenere avec les works filtrées
+  document.querySelector(".gallery").innerHTML = ""
+  generateWorks(filtreObjets)
+ }
+}
+ 
+}
+*/

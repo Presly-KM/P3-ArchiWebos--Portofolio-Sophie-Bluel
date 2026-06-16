@@ -17,9 +17,9 @@ const works = await reponse.json()
 
 function generateWorks(works) {
 
-for (let i = 0; i < works.length; i++) {
+ const classGallery = document.querySelector(".gallery")          // Il ne faut pas la placer dans la boucle for (en dessous de la ligne 21) par souci d'optimisation car JavaScript va fouiller tout ton code HTML à chaque tour de boucle (11 fois de suite !). Il vaut mieux le sortir et le placer juste au-dessus de la boucle.
 
- const classGallery = document.querySelector(".gallery")
+ for (let i = 0; i < works.length; i++) {
  const figureElement = document.createElement("figure")
  const imageElement = document.createElement("img")
  const imageFigcaption = document.createElement("figcaption")
@@ -36,25 +36,38 @@ for (let i = 0; i < works.length; i++) {
 }
 generateWorks(works)
 
+
+function GestionnaireFiltre(works) {
+const filterBtn = document.querySelectorAll(".filter-btn")
+
+filterBtn.addEventListener("click", function () {
+if (filterBtn.textContent === "Objets") {
+  const filtreObjets = works.filter(works => works.category.name === "Objets")
+// On efface la page et on la regenere avec les works filtrées
+  document.querySelector(".gallery").innerHTML = ""
+  generateWorks(filtreObjets)
+}
+if (filterBtn.textContent === "Appartements") {
+  const filtreAppartements = works.filter(works => works.category.name === "Appartements")
+// On efface la page et on la regenere avec les works filtrées
+  document.querySelector(".gallery").innerHTML = ""
+  generateWorks(filtreAppartements)
+}
+if (filterBtn.textContent === "Hôtels & restaurants") {
+  const filtreHotelsEtrestaurants = works.filter(works => works.category.name === "Hôtels & restaurants")
+// On efface la page et on la regenere avec les works filtrées
+  document.querySelector(".gallery").innerHTML = ""
+  generateWorks(filtreHotelsEtrestaurants)
 }
 
+})
 
+}
+
+GestionnaireFiltre(works)
+}
 
 initialiserGalerie()
 
-/*
-function ajouterFiltre() {
 
-  const btn-objets = document.querySelector(".btn-objets")
-  btn-objets.addEventListener("click", function () {
-  if (works[i].category.name === "Objets") {
-  const filtreObjets = works.filter(works => works.category.name === "Objets")
-  
-  // On efface la page et on la regenere avec les works filtrées
-  document.querySelector(".gallery").innerHTML = ""
-  generateWorks(filtreObjets)
- }
-}
- 
-}
-*/
+

@@ -34,39 +34,48 @@ function generateWorks(works) {
 
 }
 }
+
 generateWorks(works)
 
 
 function GestionnaireFiltre(works) {
-const filterBtn = document.querySelectorAll(".filter-btn")
+   
+ const filterBtns = document.querySelectorAll(".filter-btn");
+ 
+ for (let i = 0; i < filterBtns.length; i++) {                            // Boucle principale pour attribuer l'écouteur de clic à chaque bouton
+   filterBtns[i].addEventListener("click", function (e) {
+  
+   for (let j = 0; j < filterBtns.length; j++) {                          // 1. Gestion visuelle de la classe active
+      filterBtns[j].classList.remove("filter-btn-active");                // On retire la classe active de TOUS les boutons via une boucle for
+       }
+   e.target.classList.add("filter-btn-active");                           // On l'ajoute uniquement sur le bouton qui vient d'être cliqué
+  
+   const boutonTexte = e.target.textContent;                              // 2. Récupération du texte du bouton cliqué
 
-filterBtn.addEventListener("click", function () {
-if (filterBtn.textContent === "Objets") {
-  const filtreObjets = works.filter(works => works.category.name === "Objets")
-// On efface la page et on la regenere avec les works filtrées
-  document.querySelector(".gallery").innerHTML = ""
-  generateWorks(filtreObjets)
-}
-if (filterBtn.textContent === "Appartements") {
-  const filtreAppartements = works.filter(works => works.category.name === "Appartements")
-// On efface la page et on la regenere avec les works filtrées
-  document.querySelector(".gallery").innerHTML = ""
-  generateWorks(filtreAppartements)
-}
-if (filterBtn.textContent === "Hôtels & restaurants") {
-  const filtreHotelsEtrestaurants = works.filter(works => works.category.name === "Hôtels & restaurants")
-// On efface la page et on la regenere avec les works filtrées
-  document.querySelector(".gallery").innerHTML = ""
-  generateWorks(filtreHotelsEtrestaurants)
-}
-
-})
-
+   document.querySelector(".gallery").innerHTML = "";                     // 3. On vide la galerie avant d'afficher les éléments filtrés
+   
+   if (boutonTexte === "Tous") {                                          // 4. Conditions de filtrage (comparaisons strictes avec ===)
+        generateWorks(works);                                               // On renvoie le tableau initial complet
+      } 
+     else if (boutonTexte === "Objets") {
+        const filtreObjets = works.filter(item => item.category.name === "Objets");   // On filtre pour ne garder que la catégorie "Objets"
+                generateWorks(filtreObjets);
+            } 
+       else if (boutonTexte === "Appartements") {
+         const filtreAppartements = works.filter(item => item.category.name === "Appartements");// On filtre pour ne garder que la catégorie "Appartements"
+                generateWorks(filtreAppartements);
+            } 
+            else if (boutonTexte === "Hôtels & restaurants") {
+              const filtreHotelsEtrestaurants = works.filter(item => item.category.name === "Hotels & restaurants");// On filtre pour ne garder que la catégorie "Hôtels & restaurants"
+                generateWorks(filtreHotelsEtrestaurants);
+            }
+        });
+    }
 }
 
 GestionnaireFiltre(works)
-}
 
+}
 initialiserGalerie()
 
 

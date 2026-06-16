@@ -121,6 +121,42 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+
+/* Conteneur pour aligner et centrer les boutons */
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 50px; /* Crée l'espace nécessaire avant la grille de projets */
+}
+
+/* Style de base des boutons (mode inactif) */
+.filter-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1D6154;
+    background-color: #FFFFFF;
+    border: 1px solid #1D6154;
+    border-radius: 80px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style spécifique pour le bouton sélectionné (actif) */
+.filter-btn-active {
+    color: #FFFFFF;
+    background-color: #1D6154;
+}
+
+/* Effet au survol pour améliorer l'expérience utilisateur */
+.filter-btn:hover {
+    color: #FFFFFF;
+    background-color: #1D6154;
+}
+
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;

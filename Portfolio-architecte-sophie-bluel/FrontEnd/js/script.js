@@ -16,9 +16,9 @@ const works = await reponse.json()
 */
 
 function generateWorks(works) {
-
  const classGallery = document.querySelector(".gallery")          // Il ne faut pas la placer dans la boucle for (en dessous de la ligne 21) par souci d'optimisation car JavaScript va fouiller tout ton code HTML à chaque tour de boucle (11 fois de suite !). Il vaut mieux le sortir et le placer juste au-dessus de la boucle.
-
+ classGallery.innerHTML = "";                                     // Sécurité : on vide avant de générer
+ 
  for (let i = 0; i < works.length; i++) {
  const figureElement = document.createElement("figure")
  const imageElement = document.createElement("img")
@@ -35,47 +35,37 @@ function generateWorks(works) {
 }
 }
 
-generateWorks(works)
 
-
-function GestionnaireFiltre(works) {
-   
+// --- FONCTION : Gestion des filtres de la page d'accueil ---
+function GestionnaireFiltre(works) {   
  const filterBtns = document.querySelectorAll(".filter-btn");
  
- for (let i = 0; i < filterBtns.length; i++) {                            // Boucle principale pour attribuer l'écouteur de clic à chaque bouton
+for (let i = 0; i < filterBtns.length; i++) {                            // Boucle principale pour attribuer l'écouteur de clic à chaque bouton
    filterBtns[i].addEventListener("click", function (e) {
-  
    for (let j = 0; j < filterBtns.length; j++) {                          // 1. Gestion visuelle de la classe active
       filterBtns[j].classList.remove("filter-btn-active");                // On retire la classe active de TOUS les boutons via une boucle for
        }
    e.target.classList.add("filter-btn-active");                           // On l'ajoute uniquement sur le bouton qui vient d'être cliqué
   
    const boutonTexte = e.target.textContent;                              // 2. Récupération du texte du bouton cliqué
-
    document.querySelector(".gallery").innerHTML = "";                     // 3. On vide la galerie avant d'afficher les éléments filtrés
    
-   if (boutonTexte === "Tous") {                                          // 4. Conditions de filtrage (comparaisons strictes avec ===)
-        generateWorks(works);                                               // On renvoie le tableau initial complet
-      } 
-     else if (boutonTexte === "Objets") {
-        const filtreObjets = works.filter(item => item.category.name === "Objets");   // On filtre pour ne garder que la catégorie "Objets"
-                generateWorks(filtreObjets);
-            } 
-       else if (boutonTexte === "Appartements") {
-         const filtreAppartements = works.filter(item => item.category.name === "Appartements");// On filtre pour ne garder que la catégorie "Appartements"
-                generateWorks(filtreAppartements);
-            } 
-            else if (boutonTexte === "Hôtels & restaurants") {
-              const filtreHotelsEtrestaurants = works.filter(item => item.category.name === "Hotels & restaurants");// On filtre pour ne garder que la catégorie "Hôtels & restaurants"
-                generateWorks(filtreHotelsEtrestaurants);
+     if (boutonTexte === "Tous") {                                          // 4. Conditions de filtrage (comparaisons strictes avec ===)
+          generateWorks(works);                                               // On renvoie le tableau initial complet
+      } else if (boutonTexte === "Objets") {
+          const filtreObjets = works.filter(item => item.category.name === "Objets");   // On filtre pour ne garder que la catégorie "Objets"
+          generateWorks(filtreObjets);
+      } else if (boutonTexte === "Appartements") {
+          const filtreAppartements = works.filter(item => item.category.name === "Appartements");// On filtre pour ne garder que la catégorie "Appartements"
+          generateWorks(filtreAppartements);
+      } else if (boutonTexte === "Hôtels & restaurants") {
+          const filtreHotelsEtrestaurants = works.filter(item => item.category.name === "Hotels & restaurants");// On filtre pour ne garder que la catégorie "Hôtels & restaurants"
+          generateWorks(filtreHotelsEtrestaurants);
             }
         });
     }
 }
 
-GestionnaireFiltre(works)
-
-}
 
 // --- FONCTION : Gestion de l'état connecté ---
     function gererModeEdition() {
@@ -103,21 +93,79 @@ GestionnaireFiltre(works)
 
                 // Écouteur de clic pour la déconnexion (SecOps : Nettoyage du cache session)
                 loginLink.addEventListener("click", function () {
-                    // Supprime le token du stockage local
-                    window.localStorage.removeItem("token");
-                    // Recharge la page pour rafraîchir l'interface
-                    window.location.reload();
+                    window.localStorage.removeItem("token");                           // Supprime le token du stockage local
+                    window.location.reload();                                           // Recharge la page pour rafraîchir l'interface
                 });
             }
         }
     }
 
-    // On lance la vérification du mode édition
+
+// --- FONCTION : Générer la galerie miniature à l'intérieur de la modale ---
+    function generateModalWorks(works) {
+        const modalGallery = document.querySelector(".modal-gallery");                      
+        if (!modalGallery) return;                                                                             // Sécurité : si la modale n'existe pas, on arrête d'executer la fonction. On quitte la fonction pour éviter les erreurs JavaScript
+
+        modalGallery.innerHTML = ""; // On nettoie la grille avant d'injecter pour éviter les doublons
+
+        for (let i = 0; i < works.length; i++) {
+            const figureElement = document.createElement("figure");
+            const imageElement = document.createElement("img");
+            const trashBtn = document.createElement("button");
+
+            imageElement.src = works[i].imageUrl;
+            imageElement.alt = works[i].title;
+
+            // Ajout du bouton de suppression avec l'icône poubelle FontAwesome
+            trashBtn.classList.add("trash-btn");
+            trashBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+            
+            /* Note DevOps / SecOps : On greffe l'ID de la photo dans le dataset HTML du bouton. 
+               Cela nous permettra de savoir exactement quel ID envoyer à l'API lors de la suppression. */
+            trashBtn.dataset.id = works[i].id;
+
+            figureElement.appendChild(imageElement);
+            figureElement.appendChild(trashBtn);
+            modalGallery.appendChild(figureElement);
+        }
+    }
+
+// --- FONCTION : Gérer l'ouverture et la fermeture de la boîte modale ---
+    function gestionnaireModal() {
+        const modifyBtn = document.getElementById("modify-btn");
+        const modalContainer = document.getElementById("modal-container");
+        const closeBtn = document.getElementById("modal-close-btn");
+        const overlay = document.getElementById("modal-overlay");
+
+        if (!modifyBtn || !modalContainer) return;
+
+        // Événement 1 : Clic sur "modifier" -> Ouvre la modale et charge les miniatures
+        modifyBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            modalContainer.style.display = "flex";
+            generateModalWorks(works); // On génère les visuels uniquement à l'ouverture
+        });
+
+        // Événement 2 : Clic sur la croix (X) -> Ferme la modale
+        closeBtn.addEventListener("click", function () {
+            modalContainer.style.display = "none";
+        });
+
+        // Événement 3 : Clic sur le fond sombre (Overlay) -> Ferme la modale
+        overlay.addEventListener("click", function () {
+            modalContainer.style.display = "none";
+        });
+    }
+
+    // --- EXÉCUTION DES FONCTIONS AU CHARGEMENT ---
+    generateWorks(works);
+    GestionnaireFiltre(works);
     gererModeEdition();
+    gestionnaireModal(); // Activation des écouteurs de la modale
+}
 
-
-
-initialiserGalerie()
+// Lancement du script global
+initialiserGalerie();
 
 
 

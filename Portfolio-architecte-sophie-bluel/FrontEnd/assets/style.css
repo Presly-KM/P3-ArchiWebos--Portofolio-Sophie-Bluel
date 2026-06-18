@@ -289,7 +289,7 @@ footer nav ul {
     color: #FFFFFF;
     height: 59px;
     width: 100%;
-    display: flex;
+    display: none;                  /* bandeau noir masqué par défaut afin de l'afficher uniquement à l'issue d'une connexion d'un utilisateur */
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -307,7 +307,7 @@ footer nav ul {
 }
 
 #portfolio h2 {
-    margin-bottom: 0; /* On enlève la marge du H2 pour bien l'aligner au bouton */
+    margin-bottom: 0;             /* On enlève la marge du H2 pour bien l'aligner au bouton */
 }
 
 /* Style du bouton modifier */
@@ -316,7 +316,7 @@ footer nav ul {
     color: #000000;
     text-decoration: none;
     font-size: 14px;
-    display: flex;
+    display: none;               /* Masqué par défaut, affiché uniquement lors d'une connexion d'un utilisateur */
     align-items: center;
     gap: 8px;
 }

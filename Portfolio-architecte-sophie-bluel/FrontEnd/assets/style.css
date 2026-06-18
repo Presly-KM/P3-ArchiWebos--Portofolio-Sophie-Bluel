@@ -274,3 +274,49 @@ footer nav ul {
     text-decoration: underline;
     font-family: 'Work Sans', sans-serif;
 }
+
+
+/* --- Gestion du Mode Édition --- */
+
+/* Par défaut, tout ce qui est réservé à l'édition est masqué */
+.edit-mode-only {
+    display: none;
+}
+
+/* Style du bandeau noir supérieur */
+#edit-banner {
+    background-color: #000000;
+    color: #FFFFFF;
+    height: 59px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+}
+
+/* Conteneur pour aligner le titre H2 et le bouton modifier sur la même ligne */
+.title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+#portfolio h2 {
+    margin-bottom: 0; /* On enlève la marge du H2 pour bien l'aligner au bouton */
+}
+
+/* Style du bouton modifier */
+#modify-btn {
+    font-family: 'Work Sans', sans-serif;
+    color: #000000;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

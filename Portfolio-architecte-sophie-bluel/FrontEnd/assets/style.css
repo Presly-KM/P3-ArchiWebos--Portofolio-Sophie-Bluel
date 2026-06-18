@@ -320,3 +320,115 @@ footer nav ul {
     align-items: center;
     gap: 8px;
 }
+
+/* --- Styles de la Boîte Modale --- */
+
+#modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* S'assure de passer au-dessus du bandeau noir */
+}
+
+#modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Fond noir transparent à 30% */
+}
+
+#modal-wrapper {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 630px;
+    max-width: 90%;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 10px;
+    padding: 60px 100px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Bouton de fermeture en haut à droite */
+#modal-close-btn {
+    position: absolute;
+    top: 26px;
+    right: 30px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000000;
+}
+
+#modal-wrapper h3 {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 26px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 46px;
+}
+
+/* Grille pour les mini-images dans la modale */
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.modal-gallery figure {
+    position: relative;
+    width: 100%;
+}
+
+.modal-gallery img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+/* Bouton poubelle SecOps / Suppression */
+.modal-gallery .trash-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 2px;
+    padding: 4px 6px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.modal-separator {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #B3B3B3;
+    margin-bottom: 38px;
+}
+
+/* Bouton d'action principal de la modale */
+#add-photo-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #FFFFFF;
+    background-color: #1D6154;
+    border: none;
+    border-radius: 60px;
+    padding: 10px 40px;
+    margin: 0 auto;
+    display: block;
+    cursor: pointer;
+    width: fit-content;
+}

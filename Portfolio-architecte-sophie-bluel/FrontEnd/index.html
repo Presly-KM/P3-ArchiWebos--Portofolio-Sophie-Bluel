@@ -15,13 +15,16 @@
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
   <body>
+    <div id="edit-banner" class="edit-mode-only">
+    <i class="fa-regular fa-pen-to-square"></i> Mode édition
+</div>
     <header>
       <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
       <nav>
         <ul>
           <li>projets</li>
           <li>contact</li>
-          <li><a href="login.html">login</a></li>
+          <li><a href="login.html" id="login-link">login</a></li>
           <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
         </ul>
       </nav>
@@ -51,7 +54,10 @@
         </article>
       </section>
       <section id="portfolio">
+        <div class="title-container">
         <h2>Mes Projets</h2>
+        <a href="#" id="modify-btn" class="edit-mode-only"><i class="fa-regular fa-pen-to-square"></i> modifier</a>
+    </div>
         <div class="filters">
           <button class="filter-btn filter-btn-active">Tous</button>
           <button class="filter-btn">Objets</button>

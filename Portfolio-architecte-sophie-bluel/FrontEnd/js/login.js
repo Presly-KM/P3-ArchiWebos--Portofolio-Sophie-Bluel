@@ -1,5 +1,3 @@
-// login.js - Ce fichier est branché uniquement sur login.html
-
 const loginForm = document.querySelector("#login-form");
 
 loginForm.addEventListener("submit", async function (event) {

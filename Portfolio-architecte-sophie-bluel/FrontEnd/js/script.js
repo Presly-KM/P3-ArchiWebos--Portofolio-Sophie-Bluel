@@ -76,6 +76,47 @@ function GestionnaireFiltre(works) {
 GestionnaireFiltre(works)
 
 }
+
+// --- FONCTION : Gestion de l'état connecté ---
+    function gererModeEdition() {
+        const token = window.localStorage.getItem("token");
+
+        if (token) {
+            // 1. Afficher les éléments du mode édition (Bandeau et Bouton modifier)
+            const editElements = document.querySelectorAll(".edit-mode-only");
+            editElements.forEach(element => {
+                // Pour le bandeau on utilise flex, pour le bouton modifier on utilise flex aussi
+                element.style.display = "flex";                                                 //element.style.display veut dire "on modifie le style CSS de l'élément en question" en effet, on peut modifier n'importe quelle propriété CSS via JavaScript. Ici, on modifie la propriété display pour afficher l'élément. Car avant display était sur none (donc invisible) et maintenant on le met sur flex (donc visible).
+            });
+
+            // 2. Masquer les filtres de catégories
+            const filters = document.querySelector(".filters");
+            if (filters) {
+                filters.style.display = "none";
+            }
+
+            // 3. Transformer le lien "login" en "logout"
+            const loginLink = document.getElementById("login-link");
+            if (loginLink) {                                                            //  if (loginLink) veut dire "si loginLink existe" 
+                loginLink.textContent = "logout";
+                loginLink.href = "#"; // Devient un bouton d'action
+
+                // Écouteur de clic pour la déconnexion (SecOps : Nettoyage du cache session)
+                loginLink.addEventListener("click", function () {
+                    // Supprime le token du stockage local
+                    window.localStorage.removeItem("token");
+                    // Recharge la page pour rafraîchir l'interface
+                    window.location.reload();
+                });
+            }
+        }
+    }
+
+    // On lance la vérification du mode édition
+    gererModeEdition();
+
+
+
 initialiserGalerie()
 
 

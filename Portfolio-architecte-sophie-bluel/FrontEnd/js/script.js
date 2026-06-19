@@ -75,14 +75,13 @@ for (let i = 0; i < filterBtns.length; i++) {                            // Bouc
             // 1. Afficher les éléments du mode édition (Bandeau et Bouton modifier)
             const editElements = document.querySelectorAll(".edit-mode-only");
             editElements.forEach(element => {
-                // Pour le bandeau on utilise flex, pour le bouton modifier on utilise flex aussi
-                element.style.display = "flex";                                                 //element.style.display veut dire "on modifie le style CSS de l'élément en question" en effet, on peut modifier n'importe quelle propriété CSS via JavaScript. Ici, on modifie la propriété display pour afficher l'élément. Car avant display était sur none (donc invisible) et maintenant on le met sur flex (donc visible).
+                element.classList.remove("hidden");        // On affiche en retirant hidden                                                //element.style.display veut dire "on modifie le style CSS de l'élément en question" en effet, on peut modifier n'importe quelle propriété CSS via JavaScript. Ici, on modifie la propriété display pour afficher l'élément. Car avant display était sur none (donc invisible) et maintenant on le met sur flex (donc visible).
             });
 
             // 2. Masquer les filtres de catégories
             const filters = document.querySelector(".filters");
             if (filters) {
-                filters.style.display = "none";
+                filters.classList.add("hidden");           // On masque les filtres
             }
 
             // 3. Transformer le lien "login" en "logout"
@@ -137,24 +136,45 @@ for (let i = 0; i < filterBtns.length; i++) {                            // Bouc
         const closeBtn = document.getElementById("modal-close-btn");
         const overlay = document.getElementById("modal-overlay");
 
+        const addPhotoBtn = document.getElementById("add-photo-btn");
+        const backBtn = document.getElementById("modal-back-btn");
+        const viewGallery = document.getElementById("modal-content-gallery");
+        const viewAddPhoto = document.getElementById("modal-content-add-photo");
+        const addForm = document.getElementById("add-photo-form");
+       
         if (!modifyBtn || !modalContainer) return;
 
-        // Événement 1 : Clic sur "modifier" -> Ouvre la modale et charge les miniatures
+        function réinitialiserModale() {
+            modalContainer.classList.add("hidden");
+            viewGallery.classList.remove("hidden");
+            viewAddPhoto.classList.add("hidden");
+            backBtn.classList.add("hidden");
+            if (addForm) addForm.reset();                                // addForm.reset() permet de réinitialiser le formulaire d'ajout de photo à son état initial (vide) après la fermeture de la modale. Cela évite que les champs restent remplis avec les anciennes valeurs. En effet .reset() est une méthode native de l'objet HTMLFormElement qui réinitialise tous les champs du formulaire à leurs valeurs par défaut.
+        }
+
+        // Clic sur "modifier" -> Ouvre la modale
         modifyBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            modalContainer.style.display = "flex";
-            generateModalWorks(works); // On génère les visuels uniquement à l'ouverture
+            modalContainer.classList.remove("hidden"); // Devient visible
+            generateModalWorks(works); 
         });
 
-        // Événement 2 : Clic sur la croix (X) -> Ferme la modale
-        closeBtn.addEventListener("click", function () {
-            modalContainer.style.display = "none";
+        // Clic sur "Ajouter une photo" -> Bascule sur la Vue 2
+        addPhotoBtn.addEventListener("click", function () {
+            viewGallery.classList.add("hidden");
+            viewAddPhoto.classList.remove("hidden");
+            backBtn.classList.remove("hidden");
         });
 
-        // Événement 3 : Clic sur le fond sombre (Overlay) -> Ferme la modale
-        overlay.addEventListener("click", function () {
-            modalContainer.style.display = "none";
+        // Clic sur la flèche retour -> Revient sur la Vue 1
+        backBtn.addEventListener("click", function () {
+            viewGallery.classList.remove("hidden");
+            viewAddPhoto.classList.add("hidden");
+            backBtn.classList.add("hidden");
         });
+
+        closeBtn.addEventListener("click", réinitialiserModale);          // Ajout d'un écouteur sur le bouton de fermeture pour fermer la modale lorsqu'on clique dessus
+        overlay.addEventListener("click", réinitialiserModale);           // Ajout d'un écouteur sur l'overlay pour fermer la modale lorsqu'on clique en dehors de celle-ci
     }
 
     // --- EXÉCUTION DES FONCTIONS AU CHARGEMENT ---

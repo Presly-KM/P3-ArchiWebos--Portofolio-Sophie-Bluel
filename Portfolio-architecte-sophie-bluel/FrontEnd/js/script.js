@@ -1,127 +1,97 @@
-async function initialiserGalerie() {                                 // Par défaut, JavaScript interdit l'utilisation du mot-clé await directement au premier niveau d'un fichier. Cela génère une erreur bloquante (SyntaxError: Cannot use keyword 'await' outside an async function) et stoppe immédiatement le script. Ainsi, pour pouvoir utiliser le mot-clé await, on l'encapsule dans une fonction asynchrone (async function) que l'on appelle ensuite. 
-const reponse = await fetch("http://localhost:5678/api/works")
-const works = await reponse.json()
+async function initialiserGalerie() {     
+    // 1. Récupération des données initiales de l'API
+    const reponse = await fetch("http://localhost:5678/api/works");
+    // On passe le tableau works en "let" pour pouvoir le modifier dynamiquement à la suppression
+    let works = await reponse.json();
 
-/*
-{
-    "id": 1,
-    "title": "Abajour Tahina",
-    "imageUrl": "http://localhost:5678/images/abajour-tahina1651286843956.png",
-    "categoryId": 1,
-    "userId": 1,
-    "category": {
-      "id": 1,
-      "name": "Objets"
+    // --- FONCTION : Générer la galerie principale ---
+    function generateWorks(worksToRender) {
+        const classGallery = document.querySelector(".gallery");
+        if (!classGallery) return;
+        classGallery.innerHTML = ""; 
+        
+        for (let i = 0; i < worksToRender.length; i++) {
+            const figureElement = document.createElement("figure");
+            const imageElement = document.createElement("img");
+            const imageFigcaption = document.createElement("figcaption");
+
+            imageElement.src = worksToRender[i].imageUrl;
+            imageElement.alt = worksToRender[i].title;
+            imageFigcaption.textContent = worksToRender[i].title;
+
+            classGallery.appendChild(figureElement);
+            figureElement.appendChild(imageElement);
+            figureElement.appendChild(imageFigcaption);
+        }
     }
-*/
 
-function generateWorks(works) {
- const classGallery = document.querySelector(".gallery")          // Il ne faut pas la placer dans la boucle for (en dessous de la ligne 21) par souci d'optimisation car JavaScript va fouiller tout ton code HTML à chaque tour de boucle (11 fois de suite !). Il vaut mieux le sortir et le placer juste au-dessus de la boucle.
- classGallery.innerHTML = "";                                     // Sécurité : on vide avant de générer
- 
- for (let i = 0; i < works.length; i++) {
- const figureElement = document.createElement("figure")
- const imageElement = document.createElement("img")
- const imageFigcaption = document.createElement("figcaption")
-
- imageElement.src = works[i].imageUrl
- imageElement.alt = works[i].title
- imageFigcaption.textContent = works[i].title
-
- classGallery.appendChild(figureElement);
- figureElement.appendChild(imageElement);
- figureElement.appendChild(imageFigcaption);
-
-}
-}
-
-
-// --- FONCTION : Gestion des filtres de la page d'accueil ---
-function GestionnaireFiltre(works) {   
- const filterBtns = document.querySelectorAll(".filter-btn");
- 
-for (let i = 0; i < filterBtns.length; i++) {                            // Boucle principale pour attribuer l'écouteur de clic à chaque bouton
-   filterBtns[i].addEventListener("click", function (e) {
-   for (let j = 0; j < filterBtns.length; j++) {                          // 1. Gestion visuelle de la classe active
-      filterBtns[j].classList.remove("filter-btn-active");                // On retire la classe active de TOUS les boutons via une boucle for
-       }
-   e.target.classList.add("filter-btn-active");                           // On l'ajoute uniquement sur le bouton qui vient d'être cliqué
-  
-   const boutonTexte = e.target.textContent;                              // 2. Récupération du texte du bouton cliqué
-   document.querySelector(".gallery").innerHTML = "";                     // 3. On vide la galerie avant d'afficher les éléments filtrés
-   
-     if (boutonTexte === "Tous") {                                          // 4. Conditions de filtrage (comparaisons strictes avec ===)
-          generateWorks(works);                                               // On renvoie le tableau initial complet
-      } else if (boutonTexte === "Objets") {
-          const filtreObjets = works.filter(item => item.category.name === "Objets");   // On filtre pour ne garder que la catégorie "Objets"
-          generateWorks(filtreObjets);
-      } else if (boutonTexte === "Appartements") {
-          const filtreAppartements = works.filter(item => item.category.name === "Appartements");// On filtre pour ne garder que la catégorie "Appartements"
-          generateWorks(filtreAppartements);
-      } else if (boutonTexte === "Hôtels & restaurants") {
-          const filtreHotelsEtrestaurants = works.filter(item => item.category.name === "Hotels & restaurants");// On filtre pour ne garder que la catégorie "Hôtels & restaurants"
-          generateWorks(filtreHotelsEtrestaurants);
-            }
+    // --- FONCTION : Gestion des filtres d'accueil ---
+    function GestionnaireFiltre() {
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                filterBtns.forEach(b => b.classList.remove("filter-btn-active"));
+                e.target.classList.add("filter-btn-active"); 
+                
+                const boutonTexte = e.target.textContent;
+                
+                if (boutonTexte === "Tous") {                                                                           
+                    generateWorks(works);                                                                               
+                } else {
+                    const filtre = works.filter(item => item.category.name === boutonTexte);
+                    generateWorks(filtre);
+                }
+            });
         });
     }
-}
 
-
-// --- FONCTION : Gestion de l'état connecté ---
+    // --- FONCTION : Gestion de l'affichage du mode édition ---
     function gererModeEdition() {
         const token = window.localStorage.getItem("token");
 
         if (token) {
-            // 1. Afficher les éléments du mode édition (Bandeau et Bouton modifier)
             const editElements = document.querySelectorAll(".edit-mode-only");
-            editElements.forEach(element => {
-                element.classList.remove("hidden");        // On affiche en retirant hidden                                                //element.style.display veut dire "on modifie le style CSS de l'élément en question" en effet, on peut modifier n'importe quelle propriété CSS via JavaScript. Ici, on modifie la propriété display pour afficher l'élément. Car avant display était sur none (donc invisible) et maintenant on le met sur flex (donc visible).
-            });
+            editElements.forEach(element => element.classList.remove("hidden"));
 
-            // 2. Masquer les filtres de catégories
             const filters = document.querySelector(".filters");
-            if (filters) {
-                filters.classList.add("hidden");           // On masque les filtres
-            }
+            if (filters) filters.classList.add("hidden");
 
-            // 3. Transformer le lien "login" en "logout"
             const loginLink = document.getElementById("login-link");
-            if (loginLink) {                                                            //  if (loginLink) veut dire "si loginLink existe" 
+            if (loginLink) {                                                                                                            
                 loginLink.textContent = "logout";
-                loginLink.href = "#"; // Devient un bouton d'action
+                loginLink.href = "#"; 
 
-                // Écouteur de clic pour la déconnexion (SecOps : Nettoyage du cache session)
                 loginLink.addEventListener("click", function () {
-                    window.localStorage.removeItem("token");                           // Supprime le token du stockage local
-                    window.location.reload();                                           // Recharge la page pour rafraîchir l'interface
+                    window.localStorage.removeItem("token");
+                    window.location.reload();
                 });
             }
         }
     }
 
+    // --- FONCTION : Générer la galerie de la modale ---
+    function generateModalWorks(worksToRender) {
+        const modalGallery = document.querySelector(".modal-gallery");
+        if (!modalGallery) return;
 
-// --- FONCTION : Générer la galerie miniature à l'intérieur de la modale ---
-    function generateModalWorks(works) {
-        const modalGallery = document.querySelector(".modal-gallery");                      
-        if (!modalGallery) return;                                                                             // Sécurité : si la modale n'existe pas, on arrête d'executer la fonction. On quitte la fonction pour éviter les erreurs JavaScript
+        modalGallery.innerHTML = ""; 
 
-        modalGallery.innerHTML = ""; // On nettoie la grille avant d'injecter pour éviter les doublons
-
-        for (let i = 0; i < works.length; i++) {
+        for (let i = 0; i < worksToRender.length; i++) {
             const figureElement = document.createElement("figure");
             const imageElement = document.createElement("img");
             const trashBtn = document.createElement("button");
 
-            imageElement.src = works[i].imageUrl;
-            imageElement.alt = works[i].title;
+            imageElement.src = worksToRender[i].imageUrl;
+            imageElement.alt = worksToRender[i].title;
 
-            // Ajout du bouton de suppression avec l'icône poubelle FontAwesome
             trashBtn.classList.add("trash-btn");
+            // Utilisation d'un attribut aria pour que le lecteur d'écran lise "Supprimer" au lieu de rien
+            trashBtn.setAttribute("aria-label", `Supprimer le projet ${worksToRender[i].title}`);
             trashBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
             
-            /* Note DevOps / SecOps : On greffe l'ID de la photo dans le dataset HTML du bouton. 
-               Cela nous permettra de savoir exactement quel ID envoyer à l'API lors de la suppression. */
-            trashBtn.dataset.id = works[i].id;
+            // Stockage de l'ID du projet dans le dataset
+            trashBtn.dataset.id = worksToRender[i].id;
 
             figureElement.appendChild(imageElement);
             figureElement.appendChild(trashBtn);
@@ -129,19 +99,42 @@ for (let i = 0; i < filterBtns.length; i++) {                            // Bouc
         }
     }
 
-// --- FONCTION : Gérer l'ouverture et la fermeture de la boîte modale ---
+    // --- FONCTION : API Call pour la suppression ---
+    async function supprimerProjet(id) {
+        const token = window.localStorage.getItem("token");
+        
+        // Sécurité : si pas de token, on n'essaie même pas de taper sur l'API
+        if (!token) return false;
+
+        try {
+            const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}` // Transmission du jeton SecOps
+                }
+            });
+
+            return response.ok; // Renvoie true si le statut est 200/204
+        } catch (error) {
+            console.error("Erreur réseau lors de la suppression :", error);
+            return false;
+        }
+    }
+
+    // --- FONCTION : Orchestration de la modale ---
     function gestionnaireModal() {
         const modifyBtn = document.getElementById("modify-btn");
         const modalContainer = document.getElementById("modal-container");
         const closeBtn = document.getElementById("modal-close-btn");
         const overlay = document.getElementById("modal-overlay");
-
+        
         const addPhotoBtn = document.getElementById("add-photo-btn");
         const backBtn = document.getElementById("modal-back-btn");
         const viewGallery = document.getElementById("modal-content-gallery");
         const viewAddPhoto = document.getElementById("modal-content-add-photo");
         const addForm = document.getElementById("add-photo-form");
-       
+        const modalGallery = document.querySelector(".modal-gallery");
+
         if (!modifyBtn || !modalContainer) return;
 
         function réinitialiserModale() {
@@ -149,43 +142,63 @@ for (let i = 0; i < filterBtns.length; i++) {                            // Bouc
             viewGallery.classList.remove("hidden");
             viewAddPhoto.classList.add("hidden");
             backBtn.classList.add("hidden");
-            if (addForm) addForm.reset();                                // addForm.reset() permet de réinitialiser le formulaire d'ajout de photo à son état initial (vide) après la fermeture de la modale. Cela évite que les champs restent remplis avec les anciennes valeurs. En effet .reset() est une méthode native de l'objet HTMLFormElement qui réinitialise tous les champs du formulaire à leurs valeurs par défaut.
+            if (addForm) addForm.reset(); 
         }
 
-        // Clic sur "modifier" -> Ouvre la modale
         modifyBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            modalContainer.classList.remove("hidden"); // Devient visible
+            modalContainer.classList.remove("hidden"); 
             generateModalWorks(works); 
         });
 
-        // Clic sur "Ajouter une photo" -> Bascule sur la Vue 2
         addPhotoBtn.addEventListener("click", function () {
             viewGallery.classList.add("hidden");
             viewAddPhoto.classList.remove("hidden");
             backBtn.classList.remove("hidden");
         });
 
-        // Clic sur la flèche retour -> Revient sur la Vue 1
         backBtn.addEventListener("click", function () {
             viewGallery.classList.remove("hidden");
             viewAddPhoto.classList.add("hidden");
             backBtn.classList.add("hidden");
         });
 
-        closeBtn.addEventListener("click", réinitialiserModale);          // Ajout d'un écouteur sur le bouton de fermeture pour fermer la modale lorsqu'on clique dessus
-        overlay.addEventListener("click", réinitialiserModale);           // Ajout d'un écouteur sur l'overlay pour fermer la modale lorsqu'on clique en dehors de celle-ci
+        closeBtn.addEventListener("click", réinitialiserModale);
+        overlay.addEventListener("click", réinitialiserModale);
+
+        // 🟢 ÉCOUTEUR DÉLÉGUÉ : Capture des clics de suppression dans la modale
+        if (modalGallery) {
+            modalGallery.addEventListener("click", async function (e) {
+                // On cherche si le clic provient du bouton trash-btn ou de son icône interne
+                const boutonPoubelle = e.target.closest(".trash-btn");
+                
+                if (boutonPoubelle) {
+                    e.preventDefault();
+                    const idProjet = boutonPoubelle.dataset.id;                      // idProjet représente l'identifiant du projet à supprimer. On le récupère depuis le HTML, avec l'attribut data-id du bouton trash-btn.
+                    
+                    // Lancement de la requête de suppression sécurisée
+                    const suppressionReussie = await supprimerProjet(idProjet);      // on attend la réponse de l'API pour savoir si la suppression a été effectuée avec succès DANS LE SERVEUR. Quelques lignes de code plus bas, "works = works.filter(item => item.id !== parseInt(idProjet))" se chargera de rendre la suppression effective visuellement dans la galerie d'accueil et dans la modale, sans que l'utilisateur soit obligé de recharger la page.
+                    
+                    if (suppressionReussie) {
+                        // Mise à jour de l'état local (On filtre le tableau pour retirer l'élément supprimé)
+                        works = works.filter(item => item.id !== parseInt(idProjet));  // Grace au let (l.5), "works" qui correspond aux données par défaut des 11 projets, peut à l'occasion de la suppression de projets etre réassigné afin de remplacer l'ancien tableau par un nouveau dépouillé de l'élément supprimé. La ligne de code dit : « Parcours tout mon tableau de projets, examine-les un par un, et ne garde que ceux dont l'identifiant (id) est différent de celui de la poubelle cliquée. ». Concernant parseInt : Comme l'opérateur !== est très strict, si on compare le nombre 5 avec le texte "5", JavaScript considérera qu'ils sont différents et refusera de supprimer le projet. La fonction parseInt() sert à transformer le texte "5" en un vrai nombre 5 pour que la comparaison fonctionne parfaitement.
+                        
+                        // Rafraîchissement réactif de l'interface (Zéro rechargement de page !)
+                        generateWorks(works);      // Met à jour la galerie d'accueil
+                        generateModalWorks(works); // Met à jour les miniatures de la modale
+                    } else {
+                        alert("Impossible de supprimer ce projet. Session expirée ou droits insuffisants.");
+                    }
+                }
+            });
+        }
     }
 
-    // --- EXÉCUTION DES FONCTIONS AU CHARGEMENT ---
+    // --- EXÉCUTION ---
     generateWorks(works);
-    GestionnaireFiltre(works);
+    GestionnaireFiltre();
     gererModeEdition();
-    gestionnaireModal(); // Activation des écouteurs de la modale
+    gestionnaireModal(); 
 }
 
-// Lancement du script global
 initialiserGalerie();
-
-
-

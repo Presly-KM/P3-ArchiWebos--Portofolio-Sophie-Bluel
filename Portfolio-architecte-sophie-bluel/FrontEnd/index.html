@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
   <body>
-    <div id="edit-banner" class="edit-mode-only">
+    <div id="edit-banner" class="edit-mode-only hidden">
     <i class="fa-regular fa-pen-to-square"></i> Mode édition
 </div>
     <header>
@@ -57,7 +57,7 @@
       <section id="portfolio">
         <div class="title-container">
         <h2>Mes Projets</h2>
-        <a href="#" id="modify-btn" class="edit-mode-only"><i class="fa-regular fa-pen-to-square"></i> modifier</a>
+        <a href="#" id="modify-btn" class="edit-mode-only hidden"><i class="fa-regular fa-pen-to-square"></i> modifier</a>
     </div>
         <div class="filters">
           <button class="filter-btn filter-btn-active">Tous</button>
@@ -134,18 +134,53 @@
         </ul>
       </nav>
     </footer>
-    <div id="modal-container" style="display: none;">
+    <div id="modal-container" class="hidden">
     <div id="modal-overlay"></div>
     
     <div id="modal-wrapper">
-        <button id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        <button id="modal-back-btn" class="hidden" title="Retour" aria-label="Retourner à la galerie">   <!-- ajout de title et aria-label pour l'accessibilité et eviter message d'erreur : (Buttons must have discernible text: Element has no title attribute.)-->
+        <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <button id="modal-close-btn" title="Fermer" aria-label="Fermer la fenêtre modale">
+        <i class="fa-solid fa-xmark"></i>
+        </button>
         
         <div id="modal-content-gallery">
             <h3>Galerie photo</h3>
-            <div class="modal-gallery">
-                </div>
+            <div class="modal-gallery"></div>                        <!-- Conteneur pour les images de la galerie -->
             <hr class="modal-separator">
             <button id="add-photo-btn">Ajouter une photo</button>
+        </div>
+
+        <div id="modal-content-add-photo" class="hidden">
+            <h3>Ajout photo</h3>
+            <form id="add-photo-form">
+                <div class="upload-container">
+                    <i class="fa-regular fa-image upload-icon"></i>
+                    <label for="file-upload" class="upload-label">+ Ajouter photo</label>
+                    <input type="file" id="file-upload" accept="image/png, image/jpeg" required />
+                    <p class="upload-specs">jpg, png : 4Mo max</p>
+                    <img id="image-preview" src="#" alt="Aperçu de la photo" class="hidden" />
+                </div>
+
+                <div class="form-group">
+                    <label for="photo-title">Titre</label>
+                    <input type="text" id="photo-title" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="photo-category">Catégorie</label>
+                    <select id="photo-category" required>
+                        <option value=""></option>
+                        <option value="1">Objets</option>
+                        <option value="2">Appartements</option>
+                        <option value="3">Hôtels & restaurants</option>
+                    </select>
+                </div>
+
+                <hr class="modal-separator">
+                <input type="submit" id="validate-btn" value="Valider" />
+            </form>
         </div>
     </div>
 </div>
